@@ -7,14 +7,16 @@
            color: white; border: none; border-radius: 8px; cursor: pointer; }
   button:disabled { background: #aaa; }
   #status { font-size: 18px; margin: 20px 0; color: #333; }
+  #countdown { font-size: 48px; font-weight: bold; color: #4CAF50; margin: 10px 0; }
 </style>
 </head>
 <body>
 <h2>Sound Player</h2>
 <div id="status">Click Start to begin.</div>
+<div id="countdown"></div>
 <button id="btn" onclick="start()">Start</button>
 <script>
-  var count=0;
+  var count=0, timer;
   function beep(){
     var ctx=new(window.AudioContext||window.webkitAudioContext)();
     var o=ctx.createOscillator(),g=ctx.createGain();
@@ -24,13 +26,28 @@
     g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+1);
     o.start();o.stop(ctx.currentTime+1);
   }
-  function start(){count=0;document.getElementById("btn").disabled=true;play();}
+  function start(){
+    count=0;
+    document.getElementById("btn").disabled=true;
+    document.getElementById("countdown").textContent="";
+    play();
+  }
   function play(){
-    if(count>=4){document.getElementById("status").textContent="Done!";
-    document.getElementById("btn").disabled=false;return;}
-    count++;beep();
-    document.getElementById("status").textContent="Played "+count+" of 4"+(count<4?" — next in 15s...":"");
-    if(count<4)setTimeout(play,15000);else play();
+    if(count>=4){
+      document.getElementById("status").textContent="Done!";
+      document.getElementById("countdown").textContent="";
+      document.getElementById("btn").disabled=false;
+      return;
+    }
+    count++;
+    beep();
+    document.getElementById("status").textContent="Played "+count+" of 4";
+    if(count<4) countdown(15);
+  }
+  function countdown(sec){
+    document.getElementById("countdown").textContent=sec+"s";
+    if(sec===0){ play(); return; }
+    timer=setTimeout(function(){ countdown(sec-1); }, 1000);
   }
 </script>
 </body>
