@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  body { font-family: Arial; text-align: center; padding: 40px; background: #f0f4f8; }
+  button { padding: 10px 30px; font-size: 16px; background: #4CAF50;
+           color: white; border: none; border-radius: 8px; cursor: pointer; }
+  button:disabled { background: #aaa; }
+  #status { font-size: 18px; margin: 20px 0; color: #333; }
+</style>
+</head>
+<body>
+<h2>Sound Player</h2>
+<div id="status">Click Start to begin.</div>
+<button id="btn" onclick="start()">Start</button>
+<script>
+  var count=0;
+  function beep(){
+    var ctx=new(window.AudioContext||window.webkitAudioContext)();
+    var o=ctx.createOscillator(),g=ctx.createGain();
+    o.connect(g);g.connect(ctx.destination);
+    o.frequency.value=880;
+    g.gain.setValueAtTime(1,ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+1);
+    o.start();o.stop(ctx.currentTime+1);
+  }
+  function start(){count=0;document.getElementById("btn").disabled=true;play();}
+  function play(){
+    if(count>=4){document.getElementById("status").textContent="Done!";
+    document.getElementById("btn").disabled=false;return;}
+    count++;beep();
+    document.getElementById("status").textContent="Played "+count+" of 4"+(count<4?" — next in 15s...":"");
+    if(count<4)setTimeout(play,15000);else play();
+  }
+</script>
+</body>
+</html>
