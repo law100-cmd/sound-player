@@ -3,9 +3,12 @@
 <head>
 <style>
   body { font-family: Arial; text-align: center; padding: 40px; background: #f0f4f8; }
-  button { padding: 10px 30px; font-size: 16px; background: #4CAF50;
-           color: white; border: none; border-radius: 8px; cursor: pointer; }
-  button:disabled { background: #aaa; }
+  button { padding: 10px 20px; font-size: 16px; color: white; border: none; border-radius: 8px; cursor: pointer; margin: 5px; }
+  #startBtn { background: #4CAF50; }
+  #startBtn:disabled { background: #aaa; }
+  #testBtn { background: #2196F3; }
+  #testBtn:disabled { background: #aaa; }
+  #resetBtn { background: #f44336; }
   #status { font-size: 18px; margin: 20px 0; color: #333; }
   #countdown { font-size: 48px; font-weight: bold; color: #4CAF50; margin: 10px 0; }
 </style>
@@ -14,7 +17,10 @@
 <h2>Sound Player</h2>
 <div id="status">Click Start to begin.</div>
 <div id="countdown"></div>
-<button id="btn" onclick="start()">Start</button>
+<br>
+<button id="testBtn" onclick="test()">Test Sound</button>
+<button id="startBtn" onclick="start()">Start</button>
+<button id="resetBtn" onclick="reset()">Reset</button>
 <script>
   var count=0, timer;
   function beep(){
@@ -26,9 +32,17 @@
     g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+1);
     o.start();o.stop(ctx.currentTime+1);
   }
+  function test(){
+    beep();
+    document.getElementById("status").textContent="Testing sound...";
+    setTimeout(function(){
+      document.getElementById("status").textContent="Click Start to begin.";
+    },1500);
+  }
   function start(){
     count=0;
-    document.getElementById("btn").disabled=true;
+    document.getElementById("startBtn").disabled=true;
+    document.getElementById("testBtn").disabled=true;
     document.getElementById("countdown").textContent="";
     play();
   }
@@ -36,7 +50,8 @@
     if(count>=4){
       document.getElementById("status").textContent="Done!";
       document.getElementById("countdown").textContent="";
-      document.getElementById("btn").disabled=false;
+      document.getElementById("startBtn").disabled=false;
+      document.getElementById("testBtn").disabled=false;
       return;
     }
     count++;
@@ -47,7 +62,15 @@
   function countdown(sec){
     document.getElementById("countdown").textContent=sec+"s";
     if(sec===0){ play(); return; }
-    timer=setTimeout(function(){ countdown(sec-1); }, 1000);
+    timer=setTimeout(function(){ countdown(sec-1); },1000);
+  }
+  function reset(){
+    clearTimeout(timer);
+    count=0;
+    document.getElementById("status").textContent="Click Start to begin.";
+    document.getElementById("countdown").textContent="";
+    document.getElementById("startBtn").disabled=false;
+    document.getElementById("testBtn").disabled=false;
   }
 </script>
 </body>
